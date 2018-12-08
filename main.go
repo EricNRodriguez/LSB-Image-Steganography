@@ -54,6 +54,11 @@ func main() {
       B int
       A int
   }
+
+//   a[0] = v >> 24;
+// a[1] = v >> 16;
+// a[2] = v >>  8;
+// a[3] = v;
   // fb, err := ioutil.ReadAll(file)
 
   // if err != nil {
@@ -66,4 +71,3 @@ func main() {
   // fmt.Println(bounds)
   // width, height := bounds.Max.X, bounds.Max.Y
   // fmt.Println(width, height)
-
