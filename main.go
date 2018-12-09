@@ -2,13 +2,49 @@ package main
 
 import (
   "fmt"
-  // "image"
   "os"
-  // "io/ioutil"
-  // "strconv"
+  _ "io/ioutil"
+  _ "strconv"
   "image"
   _ "image/png"
 )
+
+type Pixel struct {
+    R int
+    G int
+    B int
+    A int
+}
+
+func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) Pixel {
+  return Pixel{ scale(r, 65535, 0, 255, 0),
+                scale(g, 65535, 0, 255, 0),
+                scale(b, 65535, 0, 255, 0),
+                scale(a, 65535, 0, 255, 0),
+              }
+}
+
+func scale(num uint32, max uint32, min uint32, newMax uint32, newMin uint32) int {
+  oldRange := max - min
+  newRange := newMax - newMin
+  return int((((num - min) * newRange) / oldRange) + newMin)
+
+}
+
+func imageToRGBA(i image.Image) [][]Pixel {
+  var imagePixels [][]Pixel
+  for r := 0 ; r < i.Bounds().Max.Y ; r++ {
+    var row []Pixel
+    for c := 0 ; c < i.Bounds().Max.X ; c++ {
+      a, b, c, d := i.At(c, r).RGBA()
+      row = append(row, rgbaToPixel(a,b,c,d))
+    }
+    imagePixels = append(imagePixels, row)
+  }
+  return imagePixels
+
+}
+
 
 func main() {
   file, err := os.Open("picture.png")
@@ -24,50 +60,6 @@ func main() {
     panic(err)
   }
 
-  bounds := image.Bounds()
-  wid, hei := bounds.Max.X, bounds.Max.Y
+  imagePixels := imageToRGBA(image)
 
-
-  var imagePixels [][][]uint32
-  for r := 0 ; r < hei ; r++ {
-    var row [][]uint32
-    for c := 0 ; c < wid ; c++ {
-      a, b, c, d := image.At(c, r).RGBA()
-      e := []uint32{a,b,c,d}
-      row = append(row, e)
-    }
-    imagePixels = append(imagePixels, row)
-  }
-
-  for _, row := range imagePixels {
-    fmt.Println(row)
-  }
 }
-  func rgbaToPixel(r uint32, g uint32, b uint32, a uint32) Pixel {
-      return Pixel{int(r / 257), int(g / 257), int(b / 257), int(a / 257)}
-  }
-
-  // Pixel struct example
-  type Pixel struct {
-      R int
-      G int
-      B int
-      A int
-  }
-
-//   a[0] = v >> 24;
-// a[1] = v >> 16;
-// a[2] = v >>  8;
-// a[3] = v;
-  // fb, err := ioutil.ReadAll(file)
-
-  // if err != nil {
-  //   panic(err)
-  // }
-  //
-  // img,d,err := image.Decode(file)
-  // fmt.Println(d, err)
-  // bounds := img.Bounds()
-  // fmt.Println(bounds)
-  // width, height := bounds.Max.X, bounds.Max.Y
-  // fmt.Println(width, height)
