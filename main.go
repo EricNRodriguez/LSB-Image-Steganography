@@ -60,8 +60,40 @@ func encodeMessage(s string) []byte {
   return d
 }
 
-// func encodeImage([]byte message, i [][]Pixel) [][]Pixel {
-//   //need to encode every pixel but skip the opacity.
+func encodeImage(message []byte, i [][]Pixel) [][]Pixel {
+  index := 0
+  for _, row := range i {
+    for _, pix := range row {
+      pix.R = encodePixel(pix.R, message[index])
+      index ++
+
+      pix.G = encodePixel(pix.G, message[index])
+      index ++
+
+      pix.B = encodePixel(pix.B, message[index])
+      index ++
+
+    }
+  }
+  return i
+}
+
+//works
+func encodePixel(colourValue int, LSB byte) int {
+  if LSB == 0  && colourValue%2==1{
+    // fmt.Println(colourValue&(colourValue-1)%2)
+    return colourValue&(colourValue-1)
+  } else if LSB == 1 && colourValue%2==0{
+    // fmt.Println(((colourValue&(colourValue-1)) + 1)%2)
+    return (colourValue&(colourValue-1)) + 1
+  } else {
+    // fmt.Println(colourValue%2)
+    return colourValue
+  }
+}
+
+// func decodeImage() {
+//
 // }
 
 
@@ -80,7 +112,17 @@ func main() {
   }
 
   imagePixels := imageToRGBA(image)
-  fmt.Println(imagePixels)
-  fmt.Println(encodeMessage("eric"))
+  // fmt.Println(imagePixels)
+  // fmt.Println(encodeMessage("eric"))
+  imagePixels = encodeImage(encodeMessage("eric"), imagePixels)
+  //it doesnt seem to be iterating throuhg the pixels row by row
+  fmt.Println(
+  imagePixels[0][0].R%2,
+  imagePixels[0][0].G%2,
+  imagePixels[0][0].B%2,
+  imagePixels[0][1].R%2,
+  imagePixels[0][1].G%2,
+  imagePixels[0][1].B%2)
+
 
 }
