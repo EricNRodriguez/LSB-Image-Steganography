@@ -4,9 +4,9 @@ import (
   "fmt"
   "os"
   _ "io/ioutil"
-  _ "strconv"
   "image"
   _ "image/png"
+  // "math/bits"
 )
 
 type Pixel struct {
@@ -45,6 +45,21 @@ func imageToRGBA(i image.Image) [][]Pixel {
 
 }
 
+func encodeMessage(s string) []byte {
+  d := []byte{}
+  for _, b := range []byte(s) {
+    d = append(d, b>>6&3)
+    d = append(d, b>>4&3)
+    d = append(d, b>>2&3)
+    d = append(d, b&3)
+  }
+  return d
+}
+
+// func encodeImage([]byte message, i [][]Pixel) [][]Pixel {
+//   //need to encode every pixel but skip the opacity.
+// }
+
 
 func main() {
   file, err := os.Open("picture.png")
@@ -61,5 +76,6 @@ func main() {
   }
 
   imagePixels := imageToRGBA(image)
+  fmt.Println(imagePixels)
 
 }
