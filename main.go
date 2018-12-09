@@ -48,10 +48,14 @@ func imageToRGBA(i image.Image) [][]Pixel {
 func encodeMessage(s string) []byte {
   d := []byte{}
   for _, b := range []byte(s) {
-    d = append(d, b>>6&3)
-    d = append(d, b>>4&3)
-    d = append(d, b>>2&3)
-    d = append(d, b&3)
+    d = append(d, b>>7&1)
+    d = append(d, b>>6&1)
+    d = append(d, b>>5&1)
+    d = append(d, b>>4&1)
+    d = append(d, b>>3&1)
+    d = append(d, b>>2&1)
+    d = append(d, b>>1&1)
+    d = append(d, b&1)
   }
   return d
 }
@@ -77,5 +81,6 @@ func main() {
 
   imagePixels := imageToRGBA(image)
   fmt.Println(imagePixels)
+  fmt.Println(encodeMessage("eric"))
 
 }
