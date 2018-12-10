@@ -45,7 +45,7 @@ func imageToRGBA(i image.Image) [][]Pixel {
 
 }
 
-func encodeMessage(s string) []byte {
+func encodeMessage(s string, a int, b int) []byte {
   d := []byte{}
   for _, b := range []byte(s) {
     d = append(d, b>>7&1)
@@ -57,37 +57,38 @@ func encodeMessage(s string) []byte {
     d = append(d, b>>1&1)
     d = append(d, b&1)
   }
+  for i := 0 ; i < a*b*10 ; i++ {
+    d = append(d, byte(0))
+  }
   return d
 }
 
+
 func encodeImage(message []byte, i [][]Pixel) [][]Pixel {
   index := 0
-  for _, row := range i {
-    for _, pix := range row {
-      pix.R = encodePixel(pix.R, message[index])
-      index ++
-
-      pix.G = encodePixel(pix.G, message[index])
-      index ++
-
-      pix.B = encodePixel(pix.B, message[index])
-      index ++
-
+  for a := 0 ; a < len(i) ; a++ {
+    for b := 0 ; b < len(i[a]) ; b++ {
+      if index > 20 {
+        break
+      }
+      i[a][b].R = encodePixel(i[a][b].R, message[index])
+      index++
+      i[a][b].G = encodePixel(i[a][b].G, message[index])
+      index++
+      i[a][b].B = encodePixel(i[a][b].B, message[index])
+      index++
     }
   }
+
   return i
 }
 
-//works
 func encodePixel(colourValue int, LSB byte) int {
   if LSB == 0  && colourValue%2==1{
-    // fmt.Println(colourValue&(colourValue-1)%2)
     return colourValue&(colourValue-1)
   } else if LSB == 1 && colourValue%2==0{
-    // fmt.Println(((colourValue&(colourValue-1)) + 1)%2)
     return (colourValue&(colourValue-1)) + 1
   } else {
-    // fmt.Println(colourValue%2)
     return colourValue
   }
 }
@@ -95,6 +96,23 @@ func encodePixel(colourValue int, LSB byte) int {
 // func decodeImage() {
 //
 // }
+
+func check(imagePixels [][]Pixel)  {
+  i := 0
+  for _, row := range imagePixels {
+    for _, pix := range row {
+      if i > 20 {
+        break
+      }
+      fmt.Println(pix.R%2)
+      fmt.Println(pix.G%2)
+      fmt.Println(pix.B%2)
+      i+=3
+    }
+  }
+}
+
+
 
 
 func main() {
@@ -112,17 +130,9 @@ func main() {
   }
 
   imagePixels := imageToRGBA(image)
-  // fmt.Println(imagePixels)
-  // fmt.Println(encodeMessage("eric"))
-  imagePixels = encodeImage(encodeMessage("eric"), imagePixels)
-  //it doesnt seem to be iterating throuhg the pixels row by row
-  fmt.Println(
-  imagePixels[0][0].R%2,
-  imagePixels[0][0].G%2,
-  imagePixels[0][0].B%2,
-  imagePixels[0][1].R%2,
-  imagePixels[0][1].G%2,
-  imagePixels[0][1].B%2)
 
+  e := encodeMessage("eric", len(imagePixels), len(imagePixels[0]))
+  imagePixelsEncoded := encodeImage(e, imagePixels)
+  fmt.Println(imagePixelsEncoded)
 
 }
