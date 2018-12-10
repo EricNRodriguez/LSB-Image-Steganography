@@ -58,7 +58,6 @@ func encodeMessage(s string, a int, b int) []byte {
   return d
 }
 
-
 func encodeImage(message []byte, i [][]Pixel) [][]Pixel {
   index := 0
   for a := 0 ; a < len(i) ; a++ {
@@ -92,7 +91,6 @@ func encodePixel(colourValue int, LSB byte) int {
 //
 // }
 
-
 func main() {
   file, err := os.Open("picture.png")
   defer file.Close()
@@ -110,8 +108,7 @@ func main() {
   imagePixels := imageToRGBA(image)
 
   e := encodeMessage("eric", len(imagePixels), len(imagePixels[0]))
-  encodeImage(e, imagePixels)
-  // imagePixelsEncoded := encodeImage(e, imagePixels)
-  // fmt.Println(imagePixelsEncoded)
+  imagePixelsEncoded := encodeImage(e, imagePixels)
+  fmt.Println(imagePixelsEncoded)
 
 }
