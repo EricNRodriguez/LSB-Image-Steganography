@@ -92,6 +92,7 @@ func encodePixel(colourValue int, LSB byte) int {
 //
 // }
 
+
 func main() {
   file, err := os.Open("picture.png")
   defer file.Close()
