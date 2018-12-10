@@ -4,7 +4,8 @@ import (
   "fmt"
   "os"
   "image"
-  _ "image/png"
+  "image/png"
+  "image/color"
 )
 
 type Pixel struct {
@@ -101,17 +102,26 @@ func main() {
     panic(err)
   }
 
-  image, _, err := image.Decode(file)
+  ima, _, err := image.Decode(file)
 
   if err != nil {
     panic(err)
   }
 
-  imagePixels := imageToRGBA(image)
+  imagePixels := imageToRGBA(ima)
 
   e := encodeMessage("eric", len(imagePixels), len(imagePixels[0]))
   encodeImage(e, imagePixels)
   // imagePixelsEncoded := encodeImage(e, imagePixels)
   // fmt.Println(imagePixelsEncoded)
+  // Create an 100 x 50 image
+  // encodedImage := image.NewRGBA(image.Rect(0, 0, ima.Bounds().Max.Y, ima.Bounds().Max.X))
+  // Draw a red dot at (2, 3)
+  // encodedImage.Set(2, 3, color.RGBA{255, 0, 0, 255})
+
+// need to convert back to encodedImage from imagePixels, then
+// encodedFile, _ := os.Create("enocded.png")
+// defer encodedFile.Close()
+// png.Encode(*encodedFile, *encodedImage, nil)
 
 }
