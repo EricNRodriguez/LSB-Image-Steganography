@@ -1,7 +1,7 @@
 package main
 
 import (
-  "fmt"
+  // "fmt"
   "os"
   "image"
   "image/png"
@@ -44,7 +44,7 @@ func imageToRGBA(i image.Image) [][]Pixel {
 
 }
 
-func encodeMessage(s string, a int, b int) []byte {
+func encodeMessage(s string) []byte {
   d := []byte{}
   for _, b := range []byte(s) {
     d = append(d, b >> 7 & 1)
@@ -58,7 +58,6 @@ func encodeMessage(s string, a int, b int) []byte {
   }
   return d
 }
-
 
 func encodeImage(message []byte, i [][]Pixel) [][]Pixel {
   index := 0
@@ -75,7 +74,6 @@ func encodeImage(message []byte, i [][]Pixel) [][]Pixel {
       index++
     }
   }
-
   return i
 }
 
@@ -89,10 +87,27 @@ func encodePixel(colourValue int, LSB byte) int {
   }
 }
 
-// func decodeImage() {
-//
-// }
+func createImage(p [][]Pixel) {
+  //creates file in current directory
+  outputFile, err := os.Create("encodedPicture.png")
+  if err != nil {
+    panic(err)
+  }
+  //returns a new rgba image with the given dimensions
+  outputImage := image.NewRGBA(image.Rectangle{image.Point{0,0},image.Point{len(p[0]), len(p)}})
 
+
+  for y := 0 ; y < len(p) ; y++ {
+    for x := 0 ; x < len(p[y]) ; x++ {
+      outputImage.Set(x, y, color.RGBA{uint8(p[y][x].R),
+                                       uint8(p[y][x].G),
+                                       uint8(p[y][x].B),
+                                       uint8(p[y][x].A)})
+    }
+  }
+
+  png.Encode(outputFile, outputImage)
+}
 
 func main() {
   file, err := os.Open("picture.png")
@@ -108,21 +123,7 @@ func main() {
     panic(err)
   }
 
-  imagePixels := imageToRGBA(ima)
-
-  e := encodeMessage("eric", len(imagePixels), len(imagePixels[0]))
-  encodeImage(e, imagePixels)
-  // imagePixelsEncoded := encodeImage(e, imagePixels)
-  // fmt.Println(imagePixelsEncoded)
-  // Create an 100 x 50 image
-  // encodedImage := image.NewRGBA(image.Rect(0, 0, ima.Bounds().Max.Y, ima.Bounds().Max.X))
-  // Draw a red dot at (2, 3)
-  // encodedImage.Set(2, 3, color.RGBA{255, 0, 0, 255})
-
-// need to convert back to encodedImage from imagePixels, then
-// encodedFile, _ := os.Create("enocded.png")
-// defer encodedFile.Close()
-// png.Encode(*encodedFile, *encodedImage, nil)
-
+  imagePixelsEncoded := encodeImage(encodeMessage("eric"), imageToRGBA(ima))
+  createImage(imagePixelsEncoded)
 
 }
