@@ -82,7 +82,6 @@ func encodePixel(colourValue int, LSB byte) int {
   } else if LSB == 1 && colourValue % 2 == 0 {
     return (colourValue & (colourValue - 1)) + 1
   } else {
-    //fix this logic lol
     return colourValue
   }
 }
